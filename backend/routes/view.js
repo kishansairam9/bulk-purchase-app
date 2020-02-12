@@ -1,0 +1,151 @@
+const express = require('express')
+const router = express.Router()
+
+let User = require('../models/user')
+let Product = require('../models/product')
+let Order = require('../models/order')
+
+router.get('/catalouge', async (req, res) => {
+  try {
+    let result = await Product.find()
+    res.json({products: result})
+  } catch(err) {
+    res.json({
+    'msg': err.message
+    })
+  }
+})
+
+router.get('/customer/status', async (req, res) => {
+  try {
+    let result = await User.findById(req.body._id)
+    if(!result || result.type !== "Customer") {
+      res.status(403)
+      res.json({
+        'msg': 'No customer with provided Id',
+      })
+    }
+    let orders = await Order.find({customerId: req.body._id})
+    let ordersWithStatus = []
+    for(const order of orders) {
+      let product = await Product.findById(order.productId)
+      let status;
+      if(product.dispatched) {
+        status = "Dispatched"
+      } else if (product.cancelled) {
+        status = "Cancelled"
+      } else if (product.quantityLeft > 0) {
+        status = "Waiting"
+      } else {
+        status = "Placed"
+      }
+      ordersWithStatus.push({...order._doc, status: status})
+    }
+    res.json({orders: ordersWithStatus})
+  } catch(err) {
+    if(err.name === "CastError") {
+      res.json({
+        'msg': 'No entry with provided Id'
+      })
+    }
+    else {
+      res.json({
+      'msg': err.message
+      })
+    }
+  }
+})
+
+router.get('/vendor/listings', async (req, res) => {
+  try {
+    let result = await User.findById(req.body._id)
+    if(!result || result.type !== "Vendor") {
+      res.status(403)
+      res.json({
+        'msg': 'No vendor with provided Id',
+      })
+    }
+    let prods = await Product.find({
+      'dispatched': {$ne: true},
+      'vendorId': req.body._id
+    })
+    res.json({products: prods})
+  } catch(err) {
+    if(err.name === "CastError") {
+      res.json({
+        'msg': 'No entry with provided Id'
+      })
+    }
+    else {
+      res.json({
+      'msg': err.message
+      })
+    }
+  }
+})
+
+router.get('/vendor/ready', async (req, res) => {
+  try {
+    let result = await User.findById(req.body._id)
+    if(!result || result.type !== "Vendor") {
+      res.status(403)
+      res.json({
+        'msg': 'No vendor with provided Id',
+      })
+    }
+    let prods = await Product.find({
+      'quantityLeft': 0,
+      'vendorId': req.body._id
+    })
+    res.json({products: prods})
+  } catch(err) {
+    if(err.name === "CastError") {
+      res.json({
+        'msg': 'No entry with provided Id'
+      })
+    }
+    else {
+      res.json({
+      'msg': err.message
+      })
+    }
+  }
+})
+
+router.get('/vendor/dispatched', async (req, res) => {
+  try {
+    let result = await User.findById(req.body._id)
+    if(!result || result.type !== "Vendor") {
+      res.status(403)
+      res.json({
+        'msg': 'No vendor with provided Id',
+      })
+    }
+    let dispatchedProducts = await Product.find({
+      'dispatched': true,
+      'vendorId': req.body._id
+    })
+    let orders = []
+    for(const product of dispatchedProducts) {
+      let prodOrders = await Order.find({
+        'vendorId': req.body._id,
+        'productId': product._id
+      })
+      orders.push(...prodOrders)
+    }
+    res.json({orders: orders})
+  } catch(err) {
+    if(err.name === "CastError") {
+      res.json({
+        'msg': 'No entry with provided Id'
+      })
+    }
+    else {
+      res.json({
+      'msg': err.message
+      })
+    }
+  }
+})
+
+module.exports = router
