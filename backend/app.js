@@ -1,10 +1,27 @@
 const express = require('express')
+const mongoose = require('mongoose');
+const cors = require('cors')
 const BodyParser = require('body-parser')
 
 const app = express()
-const db = require('./config/database')
+app.use(cors());
+
+const server = '127.0.0.1:27017';
+const database = 'bulkPurchaseApp';
+
+mongoose.connect(`mongodb://${server}/${database}`, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => {
+    console.log('Database connection successful')
+  })
+  .catch(err => {
+    throw new Error(`Database failed to connect: ${err}`);
+  })
 
 app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({ extend: true }));
 
 const PORT = 5000
 

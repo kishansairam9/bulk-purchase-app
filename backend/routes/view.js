@@ -7,6 +7,8 @@ let Order = require('../models/order')
 
 router.get('/catalouge', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await Product.find()
     res.json({products: result})
   } catch(err) {
@@ -18,6 +20,8 @@ router.get('/catalouge', async (req, res) => {
 
 router.get('/customer/status', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Customer") {
       res.status(403)
@@ -58,6 +62,8 @@ router.get('/customer/status', async (req, res) => {
 
 router.get('/vendor/listings', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {
       res.status(403)
@@ -86,6 +92,8 @@ router.get('/vendor/listings', async (req, res) => {
 
 router.get('/vendor/ready', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {
       res.status(403)
@@ -114,6 +122,8 @@ router.get('/vendor/ready', async (req, res) => {
 
 router.get('/vendor/dispatched', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {
       res.status(403)

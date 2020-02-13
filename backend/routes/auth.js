@@ -5,13 +5,23 @@ let User = require('../models/user')
 
 router.get('/login', async (req, res) => {
   try {
+    if(!req.body)
+      req.body = req.query
     let result = await User.findOne({username: req.body.username})
+    if(!result) {
+      res.status(406)
+      res.json({
+        'msg': 'No such user exits'
+      })
+      return;
+    }
     result.comparePassword(req.body.password, (err, match) => {
       if(err) {
         res.status(400)
         res.json({
           'msg': err
         })
+        return;
       }
       if(match) {
         res.json({
@@ -21,11 +31,13 @@ router.get('/login', async (req, res) => {
           lastName: result.lastName,
           type: result.type
         })
+        return;
       } else {
         res.status(406)
         res.json({
           'msg': 'Incorrect Password'
         })
+        return;
       }
     })
   } catch(err) {
@@ -33,6 +45,7 @@ router.get('/login', async (req, res) => {
     res.json({
       'msg': err.message
     })
+    return;
   }
 });
 
@@ -47,11 +60,13 @@ router.post('/register', async (req, res) => {
       lastName: result.lastName,
       type: result.type
     })
+    return;
   } catch(err) {
     res.status(400)
     res.json({
       'msg': err.message
     })
+    return;
   }
 });
 
