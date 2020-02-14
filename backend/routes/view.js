@@ -73,6 +73,7 @@ router.get('/vendor/listings', async (req, res) => {
     }
     let prods = await Product.find({
       'dispatched': {$ne: true},
+      'quantityLeft': {$ne: 0},
       'vendorId': req.body._id
     })
     res.json({products: prods})
@@ -102,6 +103,7 @@ router.get('/vendor/ready', async (req, res) => {
       })
     }
     let prods = await Product.find({
+      'dispatched': {$ne: true},
       'quantityLeft': 0,
       'vendorId': req.body._id
     })

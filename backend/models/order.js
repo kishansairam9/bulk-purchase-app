@@ -5,6 +5,10 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     required: true
   },
+  customerName: {
+    type: String,
+    required: true
+  },
   vendorId: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true
@@ -20,6 +24,11 @@ const orderSchema = new mongoose.Schema({
   productName: {
     type: String,
     required: true
+  },
+  productPrice: {
+    type: Number,
+    min: [0, 'Price cannot be negative'],
+    required: true,
   },
   quantity: {
     type: Number,

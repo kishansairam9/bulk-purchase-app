@@ -161,6 +161,8 @@ router.post('/order/new', async (req, res) => {
       req.body.vendorId = product.vendorId
       req.body.vendorName = product.vendorName
       req.body.productName = product.name
+      req.body.customerName = customer.firstName + ' ' + customer.lastName
+      req.body.productPrice = product.price
       let order = new Order(req.body);
       let result = await order.save()
       res.json({
