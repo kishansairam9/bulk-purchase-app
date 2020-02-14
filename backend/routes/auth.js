@@ -5,7 +5,7 @@ let User = require('../models/user')
 
 router.get('/login', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await User.findOne({username: req.body.username})
     if(!result) {

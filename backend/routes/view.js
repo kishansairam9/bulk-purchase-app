@@ -7,7 +7,7 @@ let Order = require('../models/order')
 
 router.get('/catalouge', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await Product.find()
     res.json({products: result})
@@ -20,7 +20,7 @@ router.get('/catalouge', async (req, res) => {
 
 router.get('/customer/status', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Customer") {
@@ -62,7 +62,7 @@ router.get('/customer/status', async (req, res) => {
 
 router.get('/vendor/listings', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {
@@ -92,7 +92,7 @@ router.get('/vendor/listings', async (req, res) => {
 
 router.get('/vendor/ready', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {
@@ -122,7 +122,7 @@ router.get('/vendor/ready', async (req, res) => {
 
 router.get('/vendor/dispatched', async (req, res) => {
   try {
-    if(!req.body)
+    if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
     let result = await User.findById(req.body._id)
     if(!result || result.type !== "Vendor") {

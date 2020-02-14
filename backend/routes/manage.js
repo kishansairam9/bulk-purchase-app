@@ -13,6 +13,7 @@ router.post('/product/new', async (req, res) => {
       res.json({
         'msg': 'No user with provided Id',
       })
+      return
     }
     if(vendor.type === "Vendor") {
       req.body.vendorName = vendor.firstName + ' ' + vendor.lastName;
@@ -22,22 +23,28 @@ router.post('/product/new', async (req, res) => {
         'msg': 'Success',
         '_id': result._id
       })
+      return
     } else {
       res.status(403)
       res.json({
         'msg': 'User needs to be vendor, not a customer',
       })
+      return
     }
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -50,33 +57,41 @@ router.patch('/product/dispatch', async (req, res) => {
       res.json({
         'msg': 'No product with provided Id',
       })
+      return
     }
     if(result.cancelled) {
       res.status(403)
       res.json({
         'msg': 'Cannot dispatch cancelled product',
       })
+      return
     }
     if(result.quantityLeft !== 0) {
       res.status(403)
       res.json({
         'msg': `Cannot dispatch while ${result.quantityLeft} Quantity Left`,
       })
+      return
     }
     res.json({
       'msg': 'Success',
       '_id': result._id
     })
+    return
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -89,21 +104,27 @@ router.patch('/product/cancel', async (req, res) => {
       res.json({
         'msg': 'No product with provided Id',
       })
+      return
     }
     res.json({
       'msg': 'Success',
       '_id': result._id
     })
+    return
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -116,6 +137,7 @@ router.post('/order/new', async (req, res) => {
       res.json({
         'msg': 'No user with provided Id',
       })
+      return
     }
     let product = await Product.findById(req.body.productId)
     if(!product) {
@@ -123,6 +145,7 @@ router.post('/order/new', async (req, res) => {
       res.json({
         'msg': 'No such product with provided Id'
       })
+      return
     }
     if(customer.type === "Customer") {
       if(product.quantityLeft < req.body.quantity) {
@@ -130,6 +153,7 @@ router.post('/order/new', async (req, res) => {
         res.json({
           'msg': 'Not enough quantity left for product to order'
         })
+        return
       } else {
         product.quantityLeft = product.quantityLeft - req.body.quantity;
         let update = await product.save()
@@ -143,22 +167,28 @@ router.post('/order/new', async (req, res) => {
         'msg': 'Success',
         '_id': result._id
       })
+      return
     } else {
       res.status(403)
       res.json({
         'msg': 'Order to be done by customers only',
       })
+      return
     }
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -171,21 +201,27 @@ router.patch('/order/rate', async (req, res) => {
       res.json({
         'msg': 'No order with provided Id',
       })
+      return
     }
     res.json({
       'msg': 'Success',
       '_id': result._id
     })
+    return
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -198,6 +234,7 @@ router.patch('/order/review', async (req, res) => {
       res.json({
         'msg': 'No order with provided Id',
       })
+      return
     }
     let product = await Product.findById(order.productId)
     if(!product.dispatched) {
@@ -205,6 +242,7 @@ router.patch('/order/review', async (req, res) => {
       res.json({
         'msg': 'Reviews can be given only to dispatched orders',
       })
+      return
     }
     order.review = req.body.review
     let result = order.save()
@@ -212,16 +250,21 @@ router.patch('/order/review', async (req, res) => {
       'msg': 'Success',
       '_id': result._id
     })
+    return
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
@@ -234,6 +277,7 @@ router.patch('/order/edit', async (req, res) => {
       res.json({
         'msg': 'No order with provided Id',
       })
+      return
     }
     let product = await Product.findOne({_id: order.productId})
     if(product.dispatched) {
@@ -241,12 +285,14 @@ router.patch('/order/edit', async (req, res) => {
       res.json({
         'msg': 'Cannot edit dispatched orders'
       })
+      return
     }
     if(product.quantityLeft + order.quantity < req.body.newQuantity) {
       res.status(406)
       res.json({
         'msg': 'Not enough quantity left for product to order'
       })
+      return
     } else {
       product.quantityLeft = product.quantityLeft + order.quantity - req.body.newQuantity
       let update = product.save()
@@ -256,17 +302,22 @@ router.patch('/order/edit', async (req, res) => {
         'msg': 'Success',
         '_id': result._id
       })
+      return
     }
   } catch(err) {
     if(err.name === "CastError") {
+      res.status(403)
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return
     }
     else {
+      res.status(403)
       res.json({
       'msg': err.message
       })
+      return
     }
   }
 })
