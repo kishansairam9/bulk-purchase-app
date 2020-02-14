@@ -12,7 +12,7 @@ export default function NewProduct() {
 
   const createProduct = async () => {
     if (!request) {
-      setError("Fields can't be left empty")
+      setError({ 'msg': "Fields can't be left empty"})
       return
     }
     try {
@@ -23,7 +23,7 @@ export default function NewProduct() {
       try {
         setError({ 'msg': err.response.data.msg })
       } catch {
-        setError("Couldn't connect to server, Please try again!")
+        setError({ 'msg': "Couldn't connect to server, Please try again!" })
       }
     }
   }
@@ -79,10 +79,6 @@ export default function NewProduct() {
               {error.msg}
             </div>
           }
-
-          <div class="container-fluid alert alert-info" role="alert">
-            Existing User ? Login <Link to="/login">Here</Link>
-          </div>
 
         </div>
       </div>

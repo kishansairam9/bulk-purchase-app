@@ -11,7 +11,7 @@ export default function Register() {
 
   const registerUser = async () => {
     if (!request) {
-      setError("Fields can't be left empty")
+      setError({ 'msg': "Fields can't be left empty"})
       return
     }
     try {
@@ -24,7 +24,7 @@ export default function Register() {
       try {
         setError({ 'msg': err.response.data.msg })
       } catch {
-        setError("Couldn't connect to server, Please try again!")
+        setError({ 'msg': "Couldn't connect to server, Please try again!" })
       }
     }
   }
@@ -70,7 +70,7 @@ export default function Register() {
 
           <div class="input-group mb-3">
             <div class="input-group-prepend">
-              <label class="input-group-text" for="inputGroupSelect01">Type</label>
+              <label class="input-group-text">Type</label>
             </div>
             <select class="custom-select" id="inputGroupSelect01"
               onChange={event => setRequest({ ...request, 'type': event.target.value })}

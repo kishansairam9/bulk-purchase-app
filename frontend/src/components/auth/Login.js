@@ -11,7 +11,7 @@ export default function Login() {
 
   const loginUser = async () => {
     if (!request) {
-      setError("Fields can't be left empty")
+      setError({ 'msg': "Fields can't be left empty"})
       return
     }
     try {
@@ -26,7 +26,7 @@ export default function Login() {
       try {
         setError({ 'msg': err.response.data.msg })
       } catch {
-        setError("Couldn't connect to server, Please try again!")
+        setError({ 'msg': "Couldn't connect to server, Please try again!" })
       }
     }
   }

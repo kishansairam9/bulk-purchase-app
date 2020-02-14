@@ -2,22 +2,37 @@ import React, { useContext, useState, useEffect } from 'react'
 import { store } from '../../store'
 import { Route, Redirect, Link } from "react-router-dom";
 import api from '../../utils/api'
-import Order from '../Order'
+import Product from '../Product'
 
-export default function DispatchedOrders() {
+export default function ReadyToDispatch() {
   const { state, dispatch } = useContext(store)
 
   const [error, setError] = useState({})
-  const [dispatchedOrders, setDispatchedOrders] = useState([])
+  const [readyToDispatch, setReadyToDispatch] = useState([])
 
-  const getDispatchedOrders = async () => {
+  const dispatchProduct = async (id) => {
+    console.log(id)
     try {
-      let resp = await api.get('/view/vendor/dispatched', {
+      let resp = await api.patch('/manage/product/dispatch', {"_id": id})
+      console.log(resp.data)
+      getReadyToDispatch()
+    } catch (err) {
+      try {
+        setError({ 'msg': err.response.data.msg })
+      } catch {
+        setError({ 'msg': "Couldn't connect to server, Please try again!" })
+      }
+    }
+  }
+
+  const getReadyToDispatch = async () => {
+    try {
+      let resp = await api.get('/view/vendor/ready', {
         params: {
           "_id": state.user._id
         }
       })
-      setDispatchedOrders(resp.data.orders)
+      setReadyToDispatch(resp.data.products)
     } catch (err) {
       try {
         setError({ 'msg': err.response.data.msg })
@@ -28,7 +43,7 @@ export default function DispatchedOrders() {
   }
 
   useEffect(() => {
-    getDispatchedOrders()
+    getReadyToDispatch()
   })
 
   return (
@@ -36,12 +51,13 @@ export default function DispatchedOrders() {
 
       <div class="card border-primary mb-3">
         <div class="card-body">
-          <h2 class="card-header text-center">Orders Dispatched by You</h2>
+          <h2 class="card-header text-center">Your Listings</h2>
           <br />
           
-          {dispatchedOrders && dispatchedOrders.map((ord, i) => {
+          {readyToDispatch && readyToDispatch.map((prod, i) => {
             return ([
-            <Order order={ord} showReviewRating="True" key={`order_${i}`}/>,
+            <Product product={prod} key={`product_${i}`}/>,
+            <button class="btn btn-success btn-block" type="button" key={`button_${i}`} onClick={() => dispatchProduct(prod._id)}>Dispatch</button>
             ])
           })}
 
