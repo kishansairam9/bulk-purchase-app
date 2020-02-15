@@ -9,13 +9,13 @@ const app = express()
 app.use(cors());
 
 // Local Database
-// const server = 'mongodb://127.0.0.1:27017';
+// const server = '127.0.0.1:27017';
 const database = 'test';
 
 // Cloud Database
-const server = 'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
+const server = 'root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
 
-mongoose.connect(`${server}/${database}`, {
+mongoose.connect(`mongodb://${server}/${database}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
