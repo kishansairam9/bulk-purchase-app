@@ -11,10 +11,8 @@ export default function ReadyToDispatch() {
   const [readyToDispatch, setReadyToDispatch] = useState([])
 
   const dispatchProduct = async (id) => {
-    console.log(id)
     try {
       let resp = await api.patch('/manage/product/dispatch', {"_id": id})
-      console.log(resp.data)
       getReadyToDispatch()
     } catch (err) {
       try {
@@ -44,7 +42,7 @@ export default function ReadyToDispatch() {
 
   useEffect(() => {
     getReadyToDispatch()
-  })
+  }, [])
 
   return (
     <div>
@@ -53,15 +51,6 @@ export default function ReadyToDispatch() {
         <div class="card-body">
           <h2 class="card-header text-center">Your Listings</h2>
           <br />
-          
-          {readyToDispatch && readyToDispatch.map((prod, i) => {
-            return ([
-            <Product product={prod} key={`product_${i}`}/>,
-            <button class="btn btn-success btn-block" type="button" key={`button_${i}`} onClick={() => dispatchProduct(prod._id)}>Dispatch</button>
-            ])
-          })}
-
-          <hr/>
 
           {error.msg &&
             <div class="container-fluid alert alert-danger" role="alert">
@@ -69,13 +58,18 @@ export default function ReadyToDispatch() {
             </div>
           }
 
+          <hr/>
+          
+          {readyToDispatch && readyToDispatch.map((prod, i) => {
+            return ([
+            <Product product={prod} key={`product_${i}`}/>,
+            <button class="btn btn-success btn-block" type="button" key={`button_${i}`} onClick={() => dispatchProduct(prod._id)}>Dispatch</button>
+            ])
+          })}
+          
+
         </div>
       </div>
-
-
-      <Route path="/login">
-        {state.user && <Redirect to="/" />}
-      </Route>
 
     </div>
   )

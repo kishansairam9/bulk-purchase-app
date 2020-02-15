@@ -99,7 +99,7 @@ export default function Register() {
 
 
       <Route path="/register">
-        {state.user && <Redirect to="/" />}
+        {state && state.user && <Redirect to="/" />}
       </Route>
 
     </div>

@@ -29,7 +29,7 @@ export default function DispatchedOrders() {
 
   useEffect(() => {
     getDispatchedOrders()
-  })
+  }, [])
 
   return (
     <div>
@@ -38,14 +38,6 @@ export default function DispatchedOrders() {
         <div class="card-body">
           <h2 class="card-header text-center">Orders Dispatched by You</h2>
           <br />
-          
-          {dispatchedOrders && dispatchedOrders.map((ord, i) => {
-            return ([
-            <Order order={ord} showReviewRating="True" key={`order_${i}`}/>,
-            ])
-          })}
-
-          <hr/>
 
           {error.msg &&
             <div class="container-fluid alert alert-danger" role="alert">
@@ -53,14 +45,16 @@ export default function DispatchedOrders() {
             </div>
           }
 
+          <hr />
+
+          {dispatchedOrders && dispatchedOrders.map((ord, i) => {
+            return ([
+              <Order order={ord} showReviewRating="True" key={`order_${i}`} />,
+            ])
+          })}
+
         </div>
       </div>
-
-
-      <Route path="/login">
-        {state.user && <Redirect to="/" />}
-      </Route>
-
     </div>
   )
 }

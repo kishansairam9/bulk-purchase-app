@@ -9,16 +9,28 @@ router.get('/catalouge', async (req, res) => {
   try {
     if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
-    let result = await Product.find()
+    let result;
+    if(!req.body.search) {
+      result = await Product.find({
+        "quantityLeft": {$gt: 0}
+      })
+    } else {
+      result = await Product.find({
+        "quantityLeft": {$gt: 0},
+        "name": req.body.search
+      })
+    }
     res.json({products: result})
+    return;
   } catch(err) {
     res.json({
     'msg': err.message
     })
+    return;
   }
 })
 
-router.get('/customer/status', async (req, res) => {
+router.get('/customer/orders', async (req, res) => {
   try {
     if(!req.body || Object.keys(req.body).length == 0)
       req.body = req.query
@@ -28,6 +40,7 @@ router.get('/customer/status', async (req, res) => {
       res.json({
         'msg': 'No customer with provided Id',
       })
+      return;
     }
     let orders = await Order.find({customerId: req.body._id})
     let ordersWithStatus = []
@@ -46,16 +59,19 @@ router.get('/customer/status', async (req, res) => {
       ordersWithStatus.push({...order._doc, status: status})
     }
     res.json({orders: ordersWithStatus})
+    return;
   } catch(err) {
     if(err.name === "CastError") {
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return;
     }
     else {
       res.json({
       'msg': err.message
       })
+      return;
     }
   }
 })
@@ -70,6 +86,7 @@ router.get('/vendor/listings', async (req, res) => {
       res.json({
         'msg': 'No vendor with provided Id',
       })
+      return;
     }
     let prods = await Product.find({
       'dispatched': {$ne: true},
@@ -77,16 +94,19 @@ router.get('/vendor/listings', async (req, res) => {
       'vendorId': req.body._id
     })
     res.json({products: prods})
+    return;
   } catch(err) {
     if(err.name === "CastError") {
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return;
     }
     else {
       res.json({
       'msg': err.message
       })
+      return;
     }
   }
 })
@@ -101,6 +121,7 @@ router.get('/vendor/ready', async (req, res) => {
       res.json({
         'msg': 'No vendor with provided Id',
       })
+      return;
     }
     let prods = await Product.find({
       'dispatched': {$ne: true},
@@ -108,16 +129,19 @@ router.get('/vendor/ready', async (req, res) => {
       'vendorId': req.body._id
     })
     res.json({products: prods})
+    return;
   } catch(err) {
     if(err.name === "CastError") {
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return;
     }
     else {
       res.json({
       'msg': err.message
       })
+      return;
     }
   }
 })
@@ -132,6 +156,7 @@ router.get('/vendor/dispatched', async (req, res) => {
       res.json({
         'msg': 'No vendor with provided Id',
       })
+      return;
     }
     let dispatchedProducts = await Product.find({
       'dispatched': true,
@@ -146,16 +171,19 @@ router.get('/vendor/dispatched', async (req, res) => {
       orders.push(...prodOrders)
     }
     res.json({orders: orders})
+    return;
   } catch(err) {
     if(err.name === "CastError") {
       res.json({
         'msg': 'No entry with provided Id'
       })
+      return;
     }
     else {
       res.json({
       'msg': err.message
       })
+      return;
     }
   }
 })

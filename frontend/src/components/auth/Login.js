@@ -75,7 +75,7 @@ export default function Login() {
 
 
       <Route path="/login">
-        {state.user && <Redirect to="/" />}
+        {state && state.user && <Redirect to="/" />}
       </Route>
 
     </div>

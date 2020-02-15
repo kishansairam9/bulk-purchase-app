@@ -29,7 +29,7 @@ export default function Listings() {
 
   useEffect(() => {
     getListings()
-  })
+  }, [])
 
   return (
     <div>
@@ -38,12 +38,6 @@ export default function Listings() {
         <div class="card-body">
           <h2 class="card-header text-center">Your Listings</h2>
           <br />
-          
-          {listings && listings.map((prod, i) => {
-            return <Product product={prod} key={i}/>
-          })}
-
-          <hr/>
 
           {error.msg &&
             <div class="container-fluid alert alert-danger" role="alert">
@@ -51,13 +45,14 @@ export default function Listings() {
             </div>
           }
 
+          <hr />
+          
+          {listings && listings.map((prod, i) => {
+            return <Product product={prod} key={i} />
+          })}
+
         </div>
       </div>
-
-
-      <Route path="/login">
-        {state.user && <Redirect to="/" />}
-      </Route>
 
     </div>
   )
