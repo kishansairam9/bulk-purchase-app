@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Popup from "reactjs-popup";
 import api from '../utils/api'
 
@@ -7,10 +7,12 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
   const [response, setResponse] = useState({})
   const [rating, setRating] = useState(null)
   const [review, setReview] = useState(null)
+  const [quantityLeft, setQuantityLeft] = useState(null)
 
   const editOrder = async () => {
     if (!newQuantity) {
       setResponse({ 'msg': "New Quantity can't be empty" })
+      return;
     }
     try {
       let resp = await api.patch('/manage/order/edit', { "_id": order._id, "newQuantity": newQuantity })
@@ -25,13 +27,32 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
     }
   }
 
+  const getQuantityLeft = async () => {
+    try {
+      let resp = await api.get('/view/productQuantity', { params: {"_id": order.productId}})
+      setQuantityLeft(resp.data.quantityLeft)
+      setResponse({})
+    } catch (err) {
+      try {
+        setResponse({ 'msg': err.response.data.msg })
+      } catch {
+        setResponse({ 'msg': "Couldn't connect to server, Please try again!" })
+      }
+    }
+  }
+
   const rateOrder = async () => {
     if (!rating) {
       setResponse({ 'msg': "Rating can't be empty" })
+      return
     }
     try {
       let resp = await api.patch('/manage/order/rate', { "_id": order._id, "rating": rating })
       if (order.status === "Dispatched") {
+        if(!review) {
+          setResponse({ 'msg': "Review can't be empty" })
+          return
+        }
         let nextRespt = await api.patch('/manage/order/review', { "_id": order._id, "review": review })
       }
       setReview(null)
@@ -46,6 +67,8 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
     }
   }
 
+  useEffect(() => {getQuantityLeft()}, [])
+
   return (
     <div class="card">
       {/* <img src="..." class="card-img-top" alt="..." /> */}
@@ -57,7 +80,7 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
         <h6 class="card-subtitle mb-2 font-bold">Quantity</h6>
         <p class="card-text text-muted">{order.quantity}</p>
         {allowRating &&
-          <Popup trigger={<button class="btn btn-warning btn-block" type="button">Rate Order</button>} modal>
+          <Popup trigger={<button class="btn btn-warning btn-block" type="button">{showStatus && order.status === "Dispatched" ? "Rate & Review Order" : "Rate Order"}</button>} modal>
             <div>
               {response.msg &&
                 <div class="container-fluid alert alert-info" role="alert">
@@ -67,12 +90,12 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
 
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                  <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                  <label class="input-group-text">Rating</label>
                 </div>
                 <select class="custom-select" id="inputGroupSelect01"
-                onChange={event => setRating(parseInt(event.target.value))}
+                  onChange={event => setRating(parseInt(event.target.value))}
                 >
-                  <option selected>Choose...</option>
+                  <option defaultValue>Choose...</option>
                   <option value="0">0</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -88,11 +111,11 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
                     <span class="input-group-text">Review</span>
                   </div>
                   <textarea class="form-control"
-                  onChange={event => setReview(event.target.value)}/>
+                    onChange={event => setReview(event.target.value)} />
                 </div>
               }
 
-              <button class="btn btn-primary btn-block" type="button" onClick={rateOrder}>Rate Order</button>
+              <button class="btn btn-primary btn-block" type="button" onClick={rateOrder}>{showStatus && order.status === "Dispatched" ? "Rate & Review Order" : "Rate Order"}</button>
             </div>
           </Popup>
         }
@@ -133,6 +156,7 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
                         {response.msg}
                       </div>
                     }
+                    <p>Quantity Left : {quantityLeft}</p>
                     <div class="input-group mb-3">
                       <input type="text"
                         class="form-control"
@@ -140,6 +164,10 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
                         onChange={event => {
                           if (/\D/.test(event.target.value) || parseInt(event.target.value) <= 0) {
                             setResponse({ 'msg': "New Quantity has to be number > 0" })
+                            return;
+                          }
+                          if (parseInt(event.target.value) > quantityLeft) {
+                            setResponse({ 'msg': `Quantity left for this product is ${quantityLeft}, cant order ${event.target.value}` })
                             return;
                           }
                           setResponse({})

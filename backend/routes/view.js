@@ -12,11 +12,13 @@ router.get('/catalouge', async (req, res) => {
     let result;
     if(!req.body.search) {
       result = await Product.find({
-        "quantityLeft": {$gt: 0}
+        "quantityLeft": {$gt: 0},
+        "cancelled": {$ne: true}
       })
     } else {
       result = await Product.find({
         "quantityLeft": {$gt: 0},
+        "cancelled": {$ne: true},
         "name": req.body.search
       })
     }
@@ -29,6 +31,32 @@ router.get('/catalouge', async (req, res) => {
     return;
   }
 })
+
+router.get('/productQuantity', async (req, res) => {
+  try {
+    if(!req.body || Object.keys(req.body).length == 0)
+      req.body = req.query
+    let result = await Product.findOne({_id: req.body._id})
+    if(!result) {
+      res.status(406)
+      res.json({
+        'msg': 'No such product exits'
+      })
+      return;
+    }
+    res.json({
+      'msg': "Success",
+      'quantityLeft': result.quantityLeft
+    })
+    return;
+  } catch(err) {
+    res.status(400)
+    res.json({
+      'msg': err.message
+    })
+    return;
+  }
+});
 
 router.get('/customer/orders', async (req, res) => {
   try {

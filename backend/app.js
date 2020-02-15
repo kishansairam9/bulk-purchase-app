@@ -7,7 +7,7 @@ const app = express()
 app.use(cors());
 
 const server = '127.0.0.1:27017';
-const database = 'bulkPurchaseApp';
+const database = 'test';
 
 mongoose.connect(`mongodb://${server}/${database}`, {
   useNewUrlParser: true,

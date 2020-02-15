@@ -48,7 +48,7 @@ export default function Listings() {
           <hr />
           
           {listings && listings.map((prod, i) => {
-            return <Product product={prod} key={i} />
+            return <Product product={prod} allowCancel="True" key={i} />
           })}
 
         </div>

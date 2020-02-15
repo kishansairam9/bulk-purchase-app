@@ -14,6 +14,10 @@ export default function Register() {
       setError({ 'msg': "Fields can't be left empty"})
       return
     }
+    if (!request.type) {
+      setError({ 'msg': "Choose type of user"})
+      return
+    }
     try {
       let resp = await api.post('/auth/register', request)
       dispatch({

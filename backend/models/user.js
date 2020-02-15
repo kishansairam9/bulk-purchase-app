@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['Customer', 'Vendor']
+    enum: ['Customer', 'Vendor'],
+    required: true
   }
 })
 

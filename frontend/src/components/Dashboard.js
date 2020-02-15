@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 
 import { store } from '../store'
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Link,
 } from "react-router-dom";
