@@ -8,10 +8,14 @@ const env = require('dotenv').config()
 const app = express()
 app.use(cors());
 
-const server = '127.0.0.1:27017';
+// Local Database
+// const server = 'mongodb://127.0.0.1:27017';
 const database = 'test';
 
-mongoose.connect(process.env.MONGODB_URI || `mongodb://${server}/${database}`, {
+// Cloud Database
+const server = 'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
+
+mongoose.connect(`${server}/${database}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
