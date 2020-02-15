@@ -3,13 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors')
 const BodyParser = require('body-parser')
 
+const env = require('dotenv').config()
+
 const app = express()
 app.use(cors());
 
 const server = '127.0.0.1:27017';
 const database = 'test';
 
-mongoose.connect(`mongodb://${server}/${database}`, {
+mongoose.connect(process.env.MONGODB_URI || `mongodb://${server}/${database}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -23,7 +25,7 @@ mongoose.connect(`mongodb://${server}/${database}`, {
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extend: true }));
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 
 app.get('/', (req, res) => res.send('Serve the react page after buiding it!'))
 
