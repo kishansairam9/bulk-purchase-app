@@ -15,16 +15,24 @@ const database = 'test';
 // Cloud Database
 const server = 'root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
 
-mongoose.connect(`mongodb://${server}/${database}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => {
-    console.log('Database connection successful')
-  })
-  .catch(err => {
-    throw new Error(`Database failed to connect: ${err}`);
-  })
+// mongoose.connect(`mongodb://${server}/${database}`, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// })
+//   .then(() => {
+//     console.log('Database connection successful')
+//   })
+//   .catch(err => {
+//     throw new Error(`Database failed to connect: ${err}`);
+//   })
+
+mongoose
+  .connect(
+    'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority',
+    { useNewUrlParser: true }
+  )
+  .then(() => console.log('MongoDB Connected...'))
+  .catch(err => console.log(err));
 
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extend: true }));
