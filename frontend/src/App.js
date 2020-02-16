@@ -9,11 +9,12 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Dashboard from './components/Dashboard'
 import { StateProvider } from './store.js';
+import { URLbasename } from './config';
 
 function App() {
   return (
     <StateProvider>
-      <Router>
+      <Router basename={URLbasename}>
 
         <div className="container-fluid">
 

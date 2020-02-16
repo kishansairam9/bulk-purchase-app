@@ -13,6 +13,7 @@ import ReadyToDispatch from './vendor/ReadyToDispatch'
 import NewProduct from './vendor/NewProduct'
 import Listings from './vendor/Listings'
 import PrivateRoute from '../utils/privateRoute';
+import { URLbasename } from '../config';
 
 
 export default function Dashboard() {
