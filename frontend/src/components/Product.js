@@ -3,11 +3,12 @@ import Popup from "reactjs-popup";
 import api from '../utils/api'
 import { store } from '../store'
 
-export default function Product({ product, enableOrdering, allowCancel }) {
+export default function Product({ product, enableOrdering, allowCancel, showVendorDetails }) {
   const { state, dispatch } = useContext(store)
   const [quantity, setQuantity] = useState(null)
   const [response, setResponse] = useState({})
   const [cancelled, setCancelled] = useState(false)
+  const [vendorDetails, setVendorDetails] = useState({})
 
   const createOrder = async () => {
     if (!quantity) {
@@ -45,12 +46,58 @@ export default function Product({ product, enableOrdering, allowCancel }) {
     }
   }
 
+  const getVendorDetails = async () => {
+    try {
+      let resp = await api.get('/view/productVendorDetails', { params: { "_id": product._id } })
+      setVendorDetails(resp.data)
+      product.vendorRating = resp.data.rating
+      setResponse({})
+    } catch (err) {
+      try {
+        setResponse({ 'msg': err.response.data.msg })
+      } catch {
+        setResponse({ 'msg': "Couldn't connect to server, Please try again!" })
+      }
+    }
+  }
+
+  useEffect(() => { getVendorDetails() }, [])
+
   return (
     <div class="card">
       {/* <img src="..." class="card-img-top" alt="..." /> */}
       <div class="card-body">
         <h5 class={product.cancelled ? "card-title bg-danger text-white" : "card-title bg-primary text-white"}>{product.name} {product.cancelled && "- (Cancelled)"}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Vendor: {product.vendorName}</h6>
+        {!showVendorDetails &&
+          <h6 class="card-subtitle mb-2 text-muted">Vendor: {product.vendorName}</h6>
+        }
+        {showVendorDetails &&
+          <div class="card-text">
+            <h6 class="card-subtitle mb-2 text-muted">Vendor: {product.vendorName} | Avg Rating: {product.vendorRating} {!product.vendorRating && "No ratings given"}</h6>
+            <Popup trigger={<span class="text-info">View Reviews</span>} modal>
+              {response.msg &&
+                <div class="container-fluid alert alert-primary text-white" role="alert">
+                  {response.msg}
+                </div>
+              }
+              {vendorDetails.reviews && vendorDetails.reviews.map((rev, i) => {
+                return ([
+                  <div class="bg-info text-white container" key={`review${i}`}>
+                    <h6 class="card-subtitle mb-2 font-bold">{rev.customerName}</h6>
+                    <hr />
+                    <p class="card-text">{rev}</p>
+                  </div>
+                ])
+              })}
+              {vendorDetails.reviews && vendorDetails.reviews.length == 0 &&
+                <div class="container-fluid alert alert-info" role="alert">
+                  No reviews for this vendor
+              </div>
+              }
+            </Popup>
+          </div>
+        }
+        <hr />
         <h6 class="card-subtitle mb-2">Price: {product.price}</h6>
         <div class="card-footer">
           Quantity Left : {product.quantityLeft}

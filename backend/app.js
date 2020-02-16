@@ -12,13 +12,22 @@ const localURI = `mongodb://127.0.0.1:27017/test`
 
 const cloudURI = 'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
 
-mongoose
-  .connect(
-    cloudURI,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
-  .then(() => console.log('MongoDB Connected...'))
-  .catch(err => console.log(err));
+
+let connectWithRetry = function () {
+  mongoose
+    .connect(
+      localURI,
+      { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+    .then(() => console.log('MongoDB Connected...'))
+    .catch(err => {
+      console.error(err)
+      console.log("Retrying in 5 seconds")
+      setTimeout(connectWithRetry, 5000)
+    });
+}
+
+connectWithRetry();
 
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extend: true }));

@@ -123,15 +123,14 @@ export default function Order({ order, showReviewRating, showStatus, allowRating
           <div>
             <div>
               {order.rating &&
-                <div class="bg-warning text-dark container">
-                  <h6 class="card-subtitle mb-2 font-bold">Rating</h6>
+                <div class="bg-warning text-dark container-fluid">
+                  <p class="card-subtitle mb-2 font-bold text-white">Rating</p>
                   <p class="card-text">{order.rating}</p>
                 </div>
               }
               {order.review &&
-                <div class="bg-info text-white container">
-                  <h6 class="card-subtitle mb-2 font-bold">Review</h6>
-                  <hr />
+                <div class="bg-info text-dark container-fluid">
+                  <p class="card-subtitle mb-2 font-bold text-white">Review</p>
                   <p class="card-text">{order.review}</p>
                 </div>
               }

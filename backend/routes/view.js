@@ -58,6 +58,55 @@ router.get('/productQuantity', async (req, res) => {
   }
 });
 
+router.get('/productVendorDetails', async (req, res) => {
+  try {
+    if(!req.body || Object.keys(req.body).length == 0)
+      req.body = req.query
+    let result = await Product.findOne({_id: req.body._id})
+    if(!result) {
+      res.status(406)
+      res.json({
+        'msg': 'No such product exits'
+      })
+      return;
+    }
+    let orders = await Order.find({
+      vendorId: result.vendorId,
+      rating: {$ne: null}
+    })
+    let rating = null;
+    let cnt = 0;
+    let reviews = []
+    for(const order of orders) {
+      if(!rating && order.rating) {
+        rating = order.rating
+        cnt = 1;
+      } else if(!rating) {
+        rating += order.rating;
+        cnt = cnt + 1;
+      }
+      if(order.review) {
+        reviews.push(order.review)
+      }
+    }
+    if(!rating) {
+      rating = rating / cnt
+    }
+    res.json({
+      'msg': "Success",
+      'rating': rating,
+      'reviews': reviews
+    })
+    return;
+  } catch(err) {
+    res.status(400)
+    res.json({
+      'msg': err.message
+    })
+    return;
+  }
+});
+
 router.get('/customer/orders', async (req, res) => {
   try {
     if(!req.body || Object.keys(req.body).length == 0)

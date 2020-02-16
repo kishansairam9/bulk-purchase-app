@@ -59,6 +59,27 @@ export default function Catalouge() {
     setProducts(sorted)
   }
 
+  const sortRating = (inc) => {
+    const sorted = [...products]
+    sorted.sort((a, b) => {
+      if(!b.vendorRating)
+        return b
+      if(inc) {
+        if(!b.vendorRating)
+          return a.vendorRating
+        if(!a.vendorRating)
+          return - b.vendorRating
+        return a.vendorRating - b.vendorRating
+      }
+      if(!b.vendorRating)
+        return -a.vendorRating
+      if(!a.vendorRating)
+        return b.vendorRating
+      return b.vendorRating - a.vendorRating
+    });
+    setProducts(sorted)
+  }
+
   useEffect(() => {
     getListings()
   }, [])
@@ -84,6 +105,8 @@ export default function Catalouge() {
             <button type="button" class="btn btn-secondary" onClick={() => sortPrice(false)}>Sort Decreasing Price</button>
             <button type="button" class="btn btn-secondary" onClick={() => sortQuantity(true)}>Sort Increasing Quantity Left</button>
             <button type="button" class="btn btn-secondary" onClick={() => sortQuantity(false)}>Sort Decreasing Quantity Left</button>
+            <button type="button" class="btn btn-secondary" onClick={() => sortRating(true)}>Sort Increasing Avg Vendor Rating Left</button>
+            <button type="button" class="btn btn-secondary" onClick={() => sortRating(false)}>Sort Decreasing Avg Vendor Rating Left</button>
           </div>
 
           <hr />
@@ -104,7 +127,7 @@ export default function Catalouge() {
           <hr />
 
           {products.length > 0 && products.map((prod, i) => {
-            return <Product product={prod} key={i} enableOrdering="True" />
+            return <Product product={prod} showVendorDetails="True" key={i} enableOrdering="True" />
           })}
           {products.length === 0 &&
             <div class="container-fluid alert alert-info" role="alert">
