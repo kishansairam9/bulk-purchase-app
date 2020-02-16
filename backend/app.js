@@ -8,28 +8,14 @@ const env = require('dotenv').config()
 const app = express()
 app.use(cors());
 
-// Local Database
-// const server = '127.0.0.1:27017';
-const database = 'test';
+const localURI = `mongodb://127.0.0.1:27017/test`
 
-// Cloud Database
-const server = 'root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
-
-// mongoose.connect(`mongodb://${server}/${database}`, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// })
-//   .then(() => {
-//     console.log('Database connection successful')
-//   })
-//   .catch(err => {
-//     throw new Error(`Database failed to connect: ${err}`);
-//   })
+const cloudURI = 'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority'
 
 mongoose
   .connect(
-    'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.net/test?retryWrites=true&w=majority',
-    { useNewUrlParser: true }
+    cloudURI,
+    { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err));
