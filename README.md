@@ -2,6 +2,12 @@
 
 > DASS Assignment 2 - Kishan Sairam Adapa 2018101026
 
+## Deployment Details
+
+- Frontend deployed at https://web.iiit.ac.in/~kishan.sairam/login
+- Used mongo atlas for cloud database 
+- Heroku for node js backend server deployment
+
 ## Instructions
 
 - Requires instance of mongodb running on `127.0.0.1:27017`

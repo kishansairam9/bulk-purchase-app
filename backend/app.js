@@ -16,7 +16,7 @@ const cloudURI = 'mongodb+srv://root:root@dass-bulk-purchase-app-4febv.mongodb.n
 let connectWithRetry = function () {
   mongoose
     .connect(
-      localURI,
+      cloudURI,
       { useNewUrlParser: true, useUnifiedTopology: true }
     )
     .then(() => console.log('MongoDB Connected...'))
