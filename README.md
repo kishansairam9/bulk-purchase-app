@@ -4,7 +4,7 @@
 
 ## Deployment Details
 
-- Frontend deployed at https://web.iiit.ac.in/~kishan.sairam/login
+- Frontend deployed at https://web.iiit.ac.in/~kishan.sairam/
 - Used mongo atlas for cloud database 
 - Heroku for node js backend server deployment
 
